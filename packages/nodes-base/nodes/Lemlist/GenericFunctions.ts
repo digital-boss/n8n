@@ -13,6 +13,10 @@ import {
 	OptionsWithUri,
 } from 'request';
 
+import {
+	capitalCase,
+} from 'change-case';
+
 /**
  * Make an authenticated API request to Lemlist.
  */
@@ -86,4 +90,54 @@ export async function lemlistApiRequestAllItems(
 		responseData.length !== 0
 	);
 	return returnData;
+}
+
+export function getEvents() {
+
+	const events = [
+		'*',
+		'aircallCreated',
+		'aircallDone',
+		'aircallEnded',
+		'aircallInterested',
+		'aircallNotInterested',
+		'apiDone',
+		'apiFailed',
+		'apiInterested',
+		'apiNotInterested',
+		'attracted',
+		'contacted',
+		'emailsBounced',
+		'emailsClicked',
+		'emailsFailed',
+		'emailsInterested',
+		'emailsNotInterested',
+		'emailsOpened',
+		'emailsReplied',
+		'emailsSendFailed',
+		'emailsSent',
+		'emailsUnsubscribed',
+		'hooked',
+		'interested',
+		'linkedinInterested',
+		'linkedinInviteAccepted',
+		'linkedinInviteDone',
+		'linkedinInviteFailed',
+		'linkedinNotInterested',
+		'linkedinReplied',
+		'linkedinSendFailed',
+		'linkedinSent',
+		'linkedinVisitDone',
+		'linkedinVisitFailed',
+		'manualInterested',
+		'manualNotInterested',
+		'notInterested',
+		'opportunitiesDone',
+		'paused',
+		'resumed',
+		'skipped',
+		'warmed',
+	];
+
+	return events.map((event: string) => ({ name: (event === '*') ? '*' : capitalCase(event), value: event }));
 }
