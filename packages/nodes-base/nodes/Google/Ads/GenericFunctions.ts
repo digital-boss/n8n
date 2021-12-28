@@ -9,7 +9,7 @@ import {
 } from 'n8n-core';
 
 import {
-	IDataObject, NodeApiError,
+	IDataObject, JsonObject, NodeApiError,
 } from 'n8n-workflow';
 
 export async function googleApiRequest(this: IExecuteFunctions | IExecuteSingleFunctions | ILoadOptionsFunctions, method: string,
@@ -38,7 +38,7 @@ export async function googleApiRequest(this: IExecuteFunctions | IExecuteSingleF
 		return await this.helpers.requestOAuth2.call(this, 'googleAdsOAuth2', options);
 
 	} catch (error) {
-		throw new NodeApiError(this.getNode(), error);
+		throw new NodeApiError(this.getNode(), error as JsonObject);
 	}
 }
 
