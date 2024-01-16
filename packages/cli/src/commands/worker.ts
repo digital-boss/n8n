@@ -122,7 +122,7 @@ export class Worker extends BaseCommand {
 				{ extra: { executionId } },
 			);
 		}
-		const workflowId = fullExecutionData.workflowData.id!; // @tech_debt Ensure this is not optional
+		const workflowId = fullExecutionData.workflowData.id;
 
 		this.logger.info(
 			`Start job: ${job.id} (Workflow ID: ${workflowId} | Execution: ${executionId})`,
@@ -185,7 +185,7 @@ export class Worker extends BaseCommand {
 		);
 
 		try {
-			await PermissionChecker.check(workflow, workflowOwner.id);
+			await Container.get(PermissionChecker).check(workflow, workflowOwner.id);
 		} catch (error) {
 			if (error instanceof NodeOperationError) {
 				const failedExecution = generateFailedExecutionFromError(
