@@ -452,6 +452,15 @@ async function parseRequestObject(requestObject: IDataObject) {
 		axiosConfig.maxRedirects = 0;
 	}
 
+	axiosConfig.beforeRedirect = (redirectedRequest) => {
+		if (axiosConfig.headers?.Authorization) {
+			redirectedRequest.headers.Authorization = axiosConfig.headers.Authorization;
+		}
+		if (axiosConfig.auth) {
+			redirectedRequest.auth = `${axiosConfig.auth.username}:${axiosConfig.auth.password}`;
+		}
+	};
+
 	if (requestObject.rejectUnauthorized === false) {
 		axiosConfig.httpsAgent = new Agent({
 			rejectUnauthorized: false,
@@ -1197,6 +1206,23 @@ async function prepareBinaryData(
 	}
 
 	return await setBinaryDataBuffer(returnData, binaryData, workflowId, executionId);
+}
+
+function applyPaginationRequestData(
+	requestData: OptionsWithUri,
+	paginationRequestData: PaginationOptions['request'],
+): OptionsWithUri {
+	const preparedPaginationData: Partial<OptionsWithUri> = { ...paginationRequestData };
+
+	if ('formData' in requestData) {
+		preparedPaginationData.formData = paginationRequestData.body;
+		delete preparedPaginationData.body;
+	} else if ('form' in requestData) {
+		preparedPaginationData.form = paginationRequestData.body;
+		delete preparedPaginationData.body;
+	}
+
+	return merge({}, requestData, preparedPaginationData);
 }
 
 /**
@@ -2797,7 +2823,7 @@ const getRequestHelperFunctions = (
 
 			let tempResponseData: IN8nHttpFullResponse;
 			let makeAdditionalRequest: boolean;
-			let paginateRequestData: IHttpRequestOptions;
+			let paginateRequestData: PaginationOptions['request'];
 
 			const runIndex = 0;
 
@@ -2827,9 +2853,9 @@ const getRequestHelperFunctions = (
 					executeData,
 					additionalKeys,
 					false,
-				) as object as IHttpRequestOptions;
+				) as object as PaginationOptions['request'];
 
-				const tempRequestOptions = merge(requestOptions, paginateRequestData);
+				const tempRequestOptions = applyPaginationRequestData(requestOptions, paginateRequestData);
 
 				if (credentialsType) {
 					tempResponseData = await this.helpers.requestWithAuthentication.call(
