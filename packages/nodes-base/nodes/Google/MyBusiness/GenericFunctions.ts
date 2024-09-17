@@ -88,7 +88,10 @@ export const getPaginator = (rootProperty: string) => {
 
 		do {
 			if (nextPageToken) {
-				requestOptions.options.qs = { ...requestOptions.options.qs, pageToken: nextPageToken };
+				requestOptions.options.qs = {
+					...requestOptions.options.qs,
+					pageToken: nextPageToken,
+				};
 			}
 
 			const responseData = await this.makeRoutingRequest(requestOptions);

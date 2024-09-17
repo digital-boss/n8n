@@ -8,7 +8,11 @@ export const reviewOperations: INodeProperties[] = [
 		type: 'options',
 		default: 'get',
 		noDataExpression: true,
-		displayOptions: { show: { resource: ['review'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+			},
+		},
 		options: [
 			{
 				name: 'Delete Reply',
@@ -40,8 +44,12 @@ export const reviewOperations: INodeProperties[] = [
 				action: 'Get many reviews',
 				description: 'Retrieve multiple reviews',
 				routing: {
-					send: { paginate: true },
-					operations: { pagination: getPaginator('reviews') },
+					send: {
+						paginate: true,
+					},
+					operations: {
+						pagination: getPaginator('reviews'),
+					},
 					request: {
 						method: 'GET',
 						url: '=/{{$parameter["account"]}}/{{$parameter["location"]}}/reviews',
@@ -78,7 +86,12 @@ export const reviewFields: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: '',
 		description: 'The Google My Business account name',
-		displayOptions: { show: { resource: ['review'], operation: ['get'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['get'],
+			},
+		},
 		modes: [
 			{
 				displayName: 'Name',
@@ -114,7 +127,12 @@ export const reviewFields: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: '',
 		description: 'The specific location or business associated with the account',
-		displayOptions: { show: { resource: ['review'], operation: ['get'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['get'],
+			},
+		},
 		modes: [
 			{
 				displayName: 'Name',
@@ -150,7 +168,12 @@ export const reviewFields: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: '',
 		description: 'Select the review by name or URL to retrieve its details',
-		displayOptions: { show: { resource: ['review'], operation: ['get'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['get'],
+			},
+		},
 		modes: [
 			{
 				displayName: 'Name',
@@ -190,7 +213,12 @@ export const reviewFields: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: '',
 		description: 'The Google My Business account name',
-		displayOptions: { show: { resource: ['review'], operation: ['delete'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['delete'],
+			},
+		},
 		modes: [
 			{
 				displayName: 'Name',
@@ -226,7 +254,12 @@ export const reviewFields: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: '',
 		description: 'The specific location or business associated with the account',
-		displayOptions: { show: { resource: ['review'], operation: ['delete'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['delete'],
+			},
+		},
 		modes: [
 			{
 				displayName: 'Name',
@@ -262,7 +295,12 @@ export const reviewFields: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: '',
 		description: 'Select the review by name or URL to retrieve its details',
-		displayOptions: { show: { resource: ['review'], operation: ['delete'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['delete'],
+			},
+		},
 		modes: [
 			{
 				displayName: 'Name',
@@ -302,7 +340,12 @@ export const reviewFields: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: '',
 		description: 'The Google My Business account name',
-		displayOptions: { show: { resource: ['review'], operation: ['getAll'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['getAll'],
+			},
+		},
 		modes: [
 			{
 				displayName: 'Name',
@@ -338,7 +381,12 @@ export const reviewFields: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: '',
 		description: 'The specific location or business associated with the account',
-		displayOptions: { show: { resource: ['review'], operation: ['getAll'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['getAll'],
+			},
+		},
 		modes: [
 			{
 				displayName: 'Name',
@@ -377,7 +425,12 @@ export const reviewFields: INodeProperties[] = [
 		},
 		default: 20,
 		description: 'Max number of results to return',
-		displayOptions: { show: { resource: ['review'], operation: ['getAll'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['getAll'],
+			},
+		},
 	},
 
 	/* -------------------------------------------------------------------------- */
@@ -390,7 +443,12 @@ export const reviewFields: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: '',
 		description: 'The Google My Business account name',
-		displayOptions: { show: { resource: ['review'], operation: ['reply'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['reply'],
+			},
+		},
 		modes: [
 			{
 				displayName: 'Name',
@@ -426,7 +484,12 @@ export const reviewFields: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: '',
 		description: 'The specific location or business associated with the account',
-		displayOptions: { show: { resource: ['review'], operation: ['reply'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['reply'],
+			},
+		},
 		modes: [
 			{
 				displayName: 'Name',
@@ -462,7 +525,12 @@ export const reviewFields: INodeProperties[] = [
 		type: 'resourceLocator',
 		default: '',
 		description: 'Select the review by name or URL to retrieve its details',
-		displayOptions: { show: { resource: ['review'], operation: ['reply'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['reply'],
+			},
+		},
 		modes: [
 			{
 				displayName: 'Name',
@@ -497,8 +565,18 @@ export const reviewFields: INodeProperties[] = [
 		type: 'string',
 		default: '',
 		description: 'The body of the reply (up to 4096 characters)',
-		displayOptions: { show: { resource: ['review'], operation: ['reply'] } },
+		displayOptions: {
+			show: {
+				resource: ['review'],
+				operation: ['reply'],
+			},
+		},
 		typeOptions: { rows: 5 },
-		routing: { send: { type: 'body', property: 'comment' } },
+		routing: {
+			send: {
+				type: 'body',
+				property: 'comment',
+			},
+		},
 	},
 ];
