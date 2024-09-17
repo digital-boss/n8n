@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { handlePagination } from './GenericFunctions';
+import { getPaginator } from './GenericFunctions';
 
 export const reviewOperations: INodeProperties[] = [
 	{
@@ -41,7 +41,7 @@ export const reviewOperations: INodeProperties[] = [
 				description: 'Retrieve multiple reviews',
 				routing: {
 					send: { paginate: true },
-					operations: { pagination: handlePagination },
+					operations: { pagination: getPaginator('reviews') },
 					request: {
 						method: 'GET',
 						url: '=/{{$parameter["account"]}}/{{$parameter["location"]}}/reviews',

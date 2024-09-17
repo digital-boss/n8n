@@ -1,5 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
-import { handleDatesPresend, handlePagination } from './GenericFunctions';
+import { getPaginator, handleDatesPresend } from './GenericFunctions';
 
 export const postOperations: INodeProperties[] = [
 	{
@@ -54,7 +54,7 @@ export const postOperations: INodeProperties[] = [
 				description: 'Retrieve multiple posts',
 				routing: {
 					send: { paginate: true },
-					operations: { pagination: handlePagination },
+					operations: { pagination: getPaginator('localPosts') },
 					request: {
 						method: 'GET',
 						url: '=/{{$parameter["account"]}}/{{$parameter["location"]}}/localPosts',

@@ -15,7 +15,6 @@ import {
 import type { ITimeInterval } from './Interfaces';
 
 const addOptName = 'additionalOptions';
-const possibleRootProperties = ['localPosts', 'reviews'];
 
 const getAllParams = (execFns: IExecuteSingleFunctions): Record<string, unknown> => {
 	const params = execFns.getNode().parameters;
@@ -74,54 +73,57 @@ export async function handleDatesPresend(
 	return opts;
 }
 
-/* Helper to handle pagination */
-export async function handlePagination(
-	this: IExecutePaginationFunctions,
-	requestOptions: DeclarativeRestApiSettings.ResultOptions,
-): Promise<INodeExecutionData[]> {
-	const aggregatedResult: IDataObject = {};
-	let nextPageToken: string | undefined;
-	let totalFetched = 0;
-	const limit = this.getNodeParameter('limit', 0) as number;
+export const getPaginator = (rootProperty: string) => {
+	/* Helper to handle pagination */
+	return async function handlePagination(
+		this: IExecutePaginationFunctions,
+		requestOptions: DeclarativeRestApiSettings.ResultOptions,
+	): Promise<INodeExecutionData[]> {
+		const aggregatedResult: IDataObject = {
+			[rootProperty]: [],
+		};
+		let nextPageToken: string | undefined;
+		let totalFetched = 0;
+		const limit = this.getNodeParameter('limit', 0) as number;
 
-	do {
-		if (nextPageToken) {
-			requestOptions.options.qs = { ...requestOptions.options.qs, pageToken: nextPageToken };
-		}
-
-		const responseData = await this.makeRoutingRequest(requestOptions);
-
-		for (const page of responseData) {
-			for (const prop of possibleRootProperties) {
-				if (page.json[prop]) {
-					if (!aggregatedResult[prop]) aggregatedResult[prop] = [] as IDataObject[];
-					const currentData = page.json[prop] as IDataObject[];
-					const availableSpace = limit - totalFetched;
-					(aggregatedResult[prop] as IDataObject[]).push(...currentData.slice(0, availableSpace));
-					totalFetched = (aggregatedResult[prop] as IDataObject[]).length;
-				}
+		do {
+			if (nextPageToken) {
+				requestOptions.options.qs = { ...requestOptions.options.qs, pageToken: nextPageToken };
 			}
 
-			for (const key of Object.keys(page.json)) {
-				if (key !== 'nextPageToken' && !possibleRootProperties.includes(key)) {
-					aggregatedResult[key] = page.json[key];
+			const responseData = await this.makeRoutingRequest(requestOptions);
+
+			for (const page of responseData) {
+				const currentData = page.json[rootProperty] as IDataObject[];
+				const availableSpace = limit - totalFetched;
+				(aggregatedResult[rootProperty] as IDataObject[]).push(
+					...currentData.slice(0, availableSpace),
+				);
+				totalFetched = (aggregatedResult[rootProperty] as IDataObject[]).length;
+
+				for (const key of Object.keys(page.json)) {
+					if (key !== 'nextPageToken' && key !== rootProperty) {
+						aggregatedResult[key] = page.json[key];
+					}
 				}
+
+				nextPageToken = page.json.nextPageToken as string | undefined;
+				if (totalFetched >= limit) break;
 			}
 
-			nextPageToken = page.json.nextPageToken as string | undefined;
 			if (totalFetched >= limit) break;
+		} while (nextPageToken);
+
+		if (aggregatedResult[rootProperty]) {
+			aggregatedResult[rootProperty] = (aggregatedResult[rootProperty] as IDataObject[]).slice(
+				0,
+				limit,
+			);
 		}
 
-		if (totalFetched >= limit) break;
-	} while (nextPageToken);
-
-	const dataKey = possibleRootProperties.find((key) => aggregatedResult[key]);
-	if (dataKey && aggregatedResult[dataKey]) {
-		aggregatedResult[dataKey] = (aggregatedResult[dataKey] as IDataObject[]).slice(0, limit);
-	}
-
-	return [{ json: aggregatedResult }];
-}
+		return [{ json: aggregatedResult }];
+	};
+};
 
 /* Function used for listSearch */
 export async function googleApiRequest(
