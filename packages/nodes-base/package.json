@@ -51,6 +51,7 @@
       "dist/credentials/BoxOAuth2Api.credentials.js",
       "dist/credentials/BrandfetchApi.credentials.js",
       "dist/credentials/BubbleApi.credentials.js",
+      "dist/credentials/BurpSuiteEnterpriseApi.credentials.js",
       "dist/credentials/CalApi.credentials.js",
       "dist/credentials/CalendlyApi.credentials.js",
       "dist/credentials/CalendlyOAuth2Api.credentials.js",
