@@ -2924,13 +2924,12 @@ export default defineComponent({
 				}
 
 				if (
-					// @ts-expect-error Deprecated file
 					// eslint-disable-next-line no-constant-binary-expression
-					!(this.workflowPermissions.update ?? this.projectPermissions.workflow.update) ??
-					this.isReadOnlyRoute ??
-					this.readOnlyEnv ??
-					this.enterTimer ??
-					!connection ??
+					!(this.workflowPermissions.update || this.projectPermissions.workflow.update) ||
+					this.isReadOnlyRoute ||
+					this.readOnlyEnv ||
+					this.enterTimer ||
+					!connection ||
 					this.isConnectionActive(connection)
 				)
 					return;
@@ -2964,12 +2963,11 @@ export default defineComponent({
 				}
 
 				if (
-					// @ts-expect-error Deprecated file
 					// eslint-disable-next-line no-constant-binary-expression
-					!(this.workflowPermissions.update ?? this.projectPermissions.workflow.update) ??
-					this.isReadOnlyRoute ??
-					this.readOnlyEnv ??
-					!connection ??
+					!(this.workflowPermissions.update || this.projectPermissions.workflow.update) ||
+					this.isReadOnlyRoute ||
+					this.readOnlyEnv ||
+					!connection ||
 					!this.isConnectionActive(connection)
 				)
 					return;

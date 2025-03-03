@@ -39,6 +39,8 @@ vi.mock('@/plugins/i18n', () => ({
 				'ndv.output.waitNodeWaiting': 'Waiting for execution to resume...',
 				'ndv.output.waitNodeWaitingForFormSubmission': 'Waiting for form submission: ',
 				'ndv.output.waitNodeWaitingForWebhook': 'Waiting for webhook call: ',
+				'ndv.output.githubNodeWaitingForWebhook':
+					'Execution will continue when the following webhook URL is called: ',
 				'ndv.output.sendAndWaitWaitingApproval': 'Waiting for approval...',
 			};
 			return texts[key] || key;
@@ -267,6 +269,26 @@ describe('waitingNodeTooltip', () => {
 		const expectedUrl = 'http://localhost:5678/webhook-waiting/123';
 		expect(waitingNodeTooltip(node)).toBe(
 			`Waiting for webhook call: <a href="${expectedUrl}" target="_blank">${expectedUrl}</a>`,
+		);
+	});
+
+	it('should return GitHub-specific message for workflow dispatch with waitForCompletion', () => {
+		const node: INodeUi = {
+			id: '1',
+			name: 'GitHub',
+			type: 'n8n-nodes-base.github',
+			typeVersion: 1,
+			position: [0, 0],
+			parameters: {
+				resource: 'workflow',
+				operation: 'dispatch',
+				waitForCompletion: true,
+			},
+		};
+
+		const expectedUrl = 'http://localhost:5678/webhook-waiting/123';
+		expect(waitingNodeTooltip(node)).toBe(
+			`Execution will continue when the following webhook URL is called: <a href="${expectedUrl}" target="_blank">${expectedUrl}</a>`,
 		);
 	});
 });

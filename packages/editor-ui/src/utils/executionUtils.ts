@@ -138,7 +138,13 @@ export const waitingNodeTooltip = (node: INodeUi | null | undefined) => {
 	if (!node) return '';
 	try {
 		const resume = node?.parameters?.resume;
+		// const { resume, resource, operation, waitForCompletion } = node.parameters ?? {};
 
+		// if (resource === 'workflow' && operation === 'dispatch' && waitForCompletion) {
+		// 	const resumeUrl = `${useRootStore().webhookWaitingUrl}/${useWorkflowsStore().activeExecutionId}`;
+		// 	const message = i18n.baseText('ndv.output.githubNodeWaitingForWebhook');
+		// 	return `${message}<a href="${resumeUrl}" target="_blank">${resumeUrl}</a>`;
+		// }
 		if (resume) {
 			if (!['webhook', 'form'].includes(resume as string)) {
 				return i18n.baseText('ndv.output.waitNodeWaiting');
@@ -173,6 +179,24 @@ export const waitingNodeTooltip = (node: INodeUi | null | undefined) => {
 
 		if (node?.parameters.operation === SEND_AND_WAIT_OPERATION) {
 			return i18n.baseText('ndv.output.sendAndWaitWaitingApproval');
+		}
+	} catch (error) {
+		// do not throw error if could not compose tooltip
+	}
+
+	return '';
+};
+
+export const githubNodeTooltip = (node: INodeUi | null | undefined) => {
+	if (!node) return '';
+
+	try {
+		const { resource, operation, waitForCompletion } = node.parameters ?? {};
+
+		if (resource === 'workflow' && operation === 'dispatch' && waitForCompletion) {
+			const resumeUrl = `${useRootStore().webhookWaitingUrl}/${useWorkflowsStore().activeExecutionId}`;
+			const message = i18n.baseText('ndv.output.githubNodeWaitingForWebhook');
+			return `${message}<a href="${resumeUrl}" target="_blank">${resumeUrl}</a>`;
 		}
 	} catch (error) {
 		// do not throw error if could not compose tooltip
