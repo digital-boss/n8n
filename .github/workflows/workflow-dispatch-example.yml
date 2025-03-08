@@ -13,29 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4.1.1
-
-      - name: Debug Repository Contents
-        run: |
-          echo "Repository contents:"
-          ls -la
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Dependencies
-        run: |
-          echo "Installing dependencies..."
-          npm install
-
-      - name: Run Tests
-        run: |
-          echo "Running tests..."
-          npm test
-
       - name: Notify n8n to resume workflow
         if: always()
         run: |
