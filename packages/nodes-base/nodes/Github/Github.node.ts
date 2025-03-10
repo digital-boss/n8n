@@ -24,7 +24,7 @@ import {
 	isBase64,
 	validateJSON,
 } from './GenericFunctions';
-import { getRepositories, getUsers, getWorkflows } from './SearchFunctions';
+import { getRefs, getRepositories, getUsers, getWorkflows } from './SearchFunctions';
 import { defaultWebhookDescription } from '../Webhook/description';
 
 export class Github implements INodeType {
@@ -511,9 +511,36 @@ export class Github implements INodeType {
 			{
 				displayName: 'Ref',
 				name: 'ref',
-				type: 'string',
-				default: 'main',
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
 				required: true,
+				modes: [
+					{
+						displayName: 'From List',
+						name: 'list',
+						type: 'list',
+						placeholder: 'Select a branch, tag, or commit...',
+						typeOptions: {
+							searchListMethod: 'getRefs',
+							searchable: true,
+						},
+					},
+					{
+						displayName: 'By Name',
+						name: 'name',
+						type: 'string',
+						placeholder: 'e.g. main',
+						validation: [
+							{
+								type: 'regex',
+								properties: {
+									regex: '^[a-zA-Z0-9/._-]+$',
+									errorMessage: 'Not a valid branch, tag',
+								},
+							},
+						],
+					},
+				],
 				displayOptions: {
 					show: {
 						resource: ['workflow'],
@@ -2013,6 +2040,7 @@ export class Github implements INodeType {
 			getUsers,
 			getRepositories,
 			getWorkflows,
+			getRefs,
 		},
 	};
 
@@ -2544,7 +2572,10 @@ export class Github implements INodeType {
 						const workflowId = (workflowIdObj as IDataObject)?.value as string;
 
 						endpoint = `/repos/${owner}/${repository}/actions/workflows/${workflowId}/dispatches`;
-						body.ref = this.getNodeParameter('ref', i) as string;
+
+						const refResourceLocator = this.getNodeParameter('ref', i) as { value: string };
+						const ref = refResourceLocator.value;
+						body.ref = ref;
 
 						const inputs = validateJSON(
 							this.getNodeParameter('inputs', i) as string,
@@ -2570,7 +2601,6 @@ export class Github implements INodeType {
 							try {
 								responseData = await githubApiRequest.call(this, requestMethod, endpoint, body);
 							} catch (error) {
-								// Check if the error is a 404 (Not Found)
 								if (error.httpCode === '404' || error.statusCode === 404) {
 									throw new NodeOperationError(
 										this.getNode(),
