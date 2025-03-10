@@ -414,6 +414,144 @@ export class Github implements INodeType {
 			},
 
 			// ----------------------------------
+			//         shared
+			// ----------------------------------
+			{
+				displayName: 'Repository Owner',
+				name: 'owner',
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
+				required: true,
+				modes: [
+					{
+						displayName: 'Repository Owner',
+						name: 'list',
+						type: 'list',
+						placeholder: 'Select an owner...',
+						typeOptions: {
+							searchListMethod: 'getUsers',
+							searchable: true,
+							searchFilterRequired: true,
+						},
+					},
+					{
+						displayName: 'Link',
+						name: 'url',
+						type: 'string',
+						placeholder: 'e.g. https://github.com/n8n-io',
+						extractValue: {
+							type: 'regex',
+							regex: 'https:\\/\\/github.com\\/([-_0-9a-zA-Z]+)',
+						},
+						validation: [
+							{
+								type: 'regex',
+								properties: {
+									regex: 'https:\\/\\/github.com\\/([-_0-9a-zA-Z]+)(?:.*)',
+									errorMessage: 'Not a valid Github URL',
+								},
+							},
+						],
+					},
+					{
+						displayName: 'By Name',
+						name: 'name',
+						type: 'string',
+						placeholder: 'e.g. n8n-io',
+						validation: [
+							{
+								type: 'regex',
+								properties: {
+									regex: '[-_a-zA-Z0-9]+',
+									errorMessage: 'Not a valid Github Owner Name',
+								},
+							},
+						],
+						url: '=https://github.com/{{$value}}',
+					},
+				],
+				displayOptions: {
+					hide: {
+						operation: ['invite'],
+					},
+				},
+			},
+			{
+				displayName: 'Repository Name',
+				name: 'repository',
+				type: 'resourceLocator',
+				default: { mode: 'list', value: '' },
+				required: true,
+				modes: [
+					{
+						displayName: 'Repository Name',
+						name: 'list',
+						type: 'list',
+						placeholder: 'Select an Repository...',
+						typeOptions: {
+							searchListMethod: 'getRepositories',
+							searchable: true,
+						},
+					},
+					{
+						displayName: 'Link',
+						name: 'url',
+						type: 'string',
+						placeholder: 'e.g. https://github.com/n8n-io/n8n',
+						extractValue: {
+							type: 'regex',
+							regex: 'https:\\/\\/github.com\\/(?:[-_0-9a-zA-Z]+)\\/([-_.0-9a-zA-Z]+)',
+						},
+						validation: [
+							{
+								type: 'regex',
+								properties: {
+									regex: 'https:\\/\\/github.com\\/(?:[-_0-9a-zA-Z]+)\\/([-_.0-9a-zA-Z]+)(?:.*)',
+									errorMessage: 'Not a valid Github Repository URL',
+								},
+							},
+						],
+					},
+					{
+						displayName: 'By Name',
+						name: 'name',
+						type: 'string',
+						placeholder: 'e.g. n8n',
+						validation: [
+							{
+								type: 'regex',
+								properties: {
+									regex: '[-_.0-9a-zA-Z]+',
+									errorMessage: 'Not a valid Github Repository Name',
+								},
+							},
+						],
+						url: '=https://github.com/{{$parameter["owner"]}}/{{$value}}',
+					},
+				],
+				displayOptions: {
+					hide: {
+						resource: ['user', 'organization'],
+						operation: ['getRepositories'],
+					},
+				},
+			},
+			{
+				displayName: 'Wait for Workflow Completion',
+				name: 'waitForCompletion',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to wait for the GitHub action workflow to complete before resuming the n8n workflow',
+				displayOptions: {
+					show: {
+						resource: ['workflow'],
+						operation: ['dispatch'],
+					},
+				},
+			},
+
+			// ----------------------------------
 			//         workflow
 			// ----------------------------------
 			{
@@ -561,144 +699,6 @@ export class Github implements INodeType {
 					},
 				},
 				description: 'JSON object with input parameters for the workflow',
-			},
-
-			// ----------------------------------
-			//         shared
-			// ----------------------------------
-			{
-				displayName: 'Repository Owner',
-				name: 'owner',
-				type: 'resourceLocator',
-				default: { mode: 'list', value: '' },
-				required: true,
-				modes: [
-					{
-						displayName: 'Repository Owner',
-						name: 'list',
-						type: 'list',
-						placeholder: 'Select an owner...',
-						typeOptions: {
-							searchListMethod: 'getUsers',
-							searchable: true,
-							searchFilterRequired: true,
-						},
-					},
-					{
-						displayName: 'Link',
-						name: 'url',
-						type: 'string',
-						placeholder: 'e.g. https://github.com/n8n-io',
-						extractValue: {
-							type: 'regex',
-							regex: 'https:\\/\\/github.com\\/([-_0-9a-zA-Z]+)',
-						},
-						validation: [
-							{
-								type: 'regex',
-								properties: {
-									regex: 'https:\\/\\/github.com\\/([-_0-9a-zA-Z]+)(?:.*)',
-									errorMessage: 'Not a valid Github URL',
-								},
-							},
-						],
-					},
-					{
-						displayName: 'By Name',
-						name: 'name',
-						type: 'string',
-						placeholder: 'e.g. n8n-io',
-						validation: [
-							{
-								type: 'regex',
-								properties: {
-									regex: '[-_a-zA-Z0-9]+',
-									errorMessage: 'Not a valid Github Owner Name',
-								},
-							},
-						],
-						url: '=https://github.com/{{$value}}',
-					},
-				],
-				displayOptions: {
-					hide: {
-						operation: ['invite'],
-					},
-				},
-			},
-			{
-				displayName: 'Repository Name',
-				name: 'repository',
-				type: 'resourceLocator',
-				default: { mode: 'list', value: '' },
-				required: true,
-				modes: [
-					{
-						displayName: 'Repository Name',
-						name: 'list',
-						type: 'list',
-						placeholder: 'Select an Repository...',
-						typeOptions: {
-							searchListMethod: 'getRepositories',
-							searchable: true,
-						},
-					},
-					{
-						displayName: 'Link',
-						name: 'url',
-						type: 'string',
-						placeholder: 'e.g. https://github.com/n8n-io/n8n',
-						extractValue: {
-							type: 'regex',
-							regex: 'https:\\/\\/github.com\\/(?:[-_0-9a-zA-Z]+)\\/([-_.0-9a-zA-Z]+)',
-						},
-						validation: [
-							{
-								type: 'regex',
-								properties: {
-									regex: 'https:\\/\\/github.com\\/(?:[-_0-9a-zA-Z]+)\\/([-_.0-9a-zA-Z]+)(?:.*)',
-									errorMessage: 'Not a valid Github Repository URL',
-								},
-							},
-						],
-					},
-					{
-						displayName: 'By Name',
-						name: 'name',
-						type: 'string',
-						placeholder: 'e.g. n8n',
-						validation: [
-							{
-								type: 'regex',
-								properties: {
-									regex: '[-_.0-9a-zA-Z]+',
-									errorMessage: 'Not a valid Github Repository Name',
-								},
-							},
-						],
-						url: '=https://github.com/{{$parameter["owner"]}}/{{$value}}',
-					},
-				],
-				displayOptions: {
-					hide: {
-						resource: ['user', 'organization'],
-						operation: ['getRepositories'],
-					},
-				},
-			},
-			{
-				displayName: 'Wait for Workflow Completion',
-				name: 'waitForCompletion',
-				type: 'boolean',
-				default: false,
-				description:
-					'Whether to wait for the GitHub action workflow to complete before resuming the n8n workflow',
-				displayOptions: {
-					show: {
-						resource: ['workflow'],
-						operation: ['dispatch'],
-					},
-				},
 			},
 			// ----------------------------------
 			//         file
