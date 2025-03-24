@@ -9,7 +9,7 @@ describe('googleApiRequest', () => {
 	beforeEach(() => {
 		mockContext = {
 			helpers: {
-				requestOAuth2: jest.fn(),
+				httpRequestWithAuthentication: jest.fn(),
 			},
 			getNode: jest.fn(),
 		} as unknown as IExecuteFunctions | ILoadOptionsFunctions;
@@ -18,28 +18,33 @@ describe('googleApiRequest', () => {
 	});
 
 	it('should make a successful API request with default options', async () => {
-		(mockContext.helpers.requestOAuth2 as jest.Mock).mockResolvedValueOnce({ success: true });
+		(mockContext.helpers.httpRequestWithAuthentication as jest.Mock).mockResolvedValueOnce({
+			success: true,
+		});
 
 		const result = await googleApiRequest.call(mockContext, 'GET', '/example/resource');
 
-		expect(mockContext.helpers.requestOAuth2).toHaveBeenCalledWith(
+		expect(mockContext.helpers.httpRequestWithAuthentication).toHaveBeenCalledWith(
 			'gSuiteAdminOAuth2Api',
 			expect.objectContaining({
 				method: 'GET',
-				uri: 'https://www.googleapis.com/admin/example/resource',
+				url: 'https://www.googleapis.com/admin/example/resource',
 				headers: { 'Content-Type': 'application/json' },
 				json: true,
+				qs: {},
 			}),
 		);
 		expect(result).toEqual({ success: true });
 	});
 
 	it('should omit the body if it is empty', async () => {
-		(mockContext.helpers.requestOAuth2 as jest.Mock).mockResolvedValueOnce({ success: true });
+		(mockContext.helpers.httpRequestWithAuthentication as jest.Mock).mockResolvedValueOnce({
+			success: true,
+		});
 
 		await googleApiRequest.call(mockContext, 'GET', '/example/resource', {});
 
-		expect(mockContext.helpers.requestOAuth2).toHaveBeenCalledWith(
+		expect(mockContext.helpers.httpRequestWithAuthentication).toHaveBeenCalledWith(
 			'gSuiteAdminOAuth2Api',
 			expect.not.objectContaining({ body: expect.anything() }),
 		);
@@ -47,13 +52,15 @@ describe('googleApiRequest', () => {
 
 	it('should throw a NodeApiError if the request fails', async () => {
 		const errorResponse = { message: 'API Error' };
-		(mockContext.helpers.requestOAuth2 as jest.Mock).mockRejectedValueOnce(errorResponse);
+		(mockContext.helpers.httpRequestWithAuthentication as jest.Mock).mockRejectedValueOnce(
+			errorResponse,
+		);
 
 		await expect(googleApiRequest.call(mockContext, 'GET', '/example/resource')).rejects.toThrow(
 			NodeApiError,
 		);
 
 		expect(mockContext.getNode).toHaveBeenCalled();
-		expect(mockContext.helpers.requestOAuth2).toHaveBeenCalled();
+		expect(mockContext.helpers.httpRequestWithAuthentication).toHaveBeenCalled();
 	});
 });

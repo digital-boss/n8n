@@ -1,10 +1,9 @@
-import { type INodeTypes } from 'n8n-workflow';
-
 import { executeWorkflow } from '@test/nodes/ExecuteWorkflow';
 import { getResultNodeData, setup, workflowToTests } from '@test/nodes/Helpers';
 import type { WorkflowTestData } from '@test/nodes/types';
+import type { INodeTypes } from 'n8n-workflow';
 
-import * as transport from '../../../GenericFunctions';
+import * as transport from '../../GenericFunctions';
 
 const googleApiRequestSpy = jest.spyOn(transport, 'googleApiRequest');
 
@@ -23,7 +22,7 @@ googleApiRequestSpy.mockImplementation(async (method: string, endpoint: string) 
 });
 
 describe('Google Workspace Admin - Add User to Group', () => {
-	const workflows = ['nodes/Google/GSuiteAdmin/test/node/user/addToGroup.workflow.json'];
+	const workflows = ['nodes/Google/GSuiteAdmin/test/user/addToGroup.workflow.json'];
 	const tests = workflowToTests(workflows);
 	const nodeTypes = setup(tests);
 

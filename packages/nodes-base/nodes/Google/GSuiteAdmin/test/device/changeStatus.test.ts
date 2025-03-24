@@ -1,24 +1,28 @@
-import { type INodeTypes } from 'n8n-workflow';
-
 import { executeWorkflow } from '@test/nodes/ExecuteWorkflow';
 import { getResultNodeData, setup, workflowToTests } from '@test/nodes/Helpers';
 import type { WorkflowTestData } from '@test/nodes/types';
+import type { INodeTypes } from 'n8n-workflow';
 
-import * as transport from '../../../GenericFunctions';
+import * as transport from '../../GenericFunctions';
 
 const googleApiRequestSpy = jest.spyOn(transport, 'googleApiRequest');
 
 googleApiRequestSpy.mockImplementation(async (method: string, resource: string) => {
-	if (method === 'GET' && resource === '/directory/v1/customer/my_customer/devices/chromeos/') {
+	if (
+		method === 'POST' &&
+		resource ===
+			'/directory/v1/customer/my_customer/devices/chromeos/9140fcff-7ba7-4324-8552-f7de68481b4c/action'
+	) {
 		return {
-			kind: 'admin#directory#chromeosdevices',
-			etag: '"6gJ8FoxdqGNyNxXYrlQh-KP52AygR_AihQSbYcusikU/oMWMqbsluP5m2PCo8Y7WmWeHGP4"',
+			kind: 'admin#directory#chromeosdeviceAction',
+			action: 'reenable',
+			status: 'SUCCESS',
 		};
 	}
 });
 
-describe('Google Workspace Admin - Get Many Devices', () => {
-	const workflows = ['nodes/Google/GSuiteAdmin/test/node/device/getAll.workflow.json'];
+describe('Google Workspace Admin - Change Device Status', () => {
+	const workflows = ['nodes/Google/GSuiteAdmin/test/device/changeStatus.workflow.json'];
 	const tests = workflowToTests(workflows);
 	const nodeTypes = setup(tests);
 
@@ -29,8 +33,9 @@ describe('Google Workspace Admin - Get Many Devices', () => {
 		const expectedOutput = [
 			{
 				json: {
-					kind: 'admin#directory#chromeosdevices',
-					etag: '"6gJ8FoxdqGNyNxXYrlQh-KP52AygR_AihQSbYcusikU/oMWMqbsluP5m2PCo8Y7WmWeHGP4"',
+					kind: 'admin#directory#chromeosdeviceAction',
+					action: 'reenable',
+					status: 'SUCCESS',
 				},
 			},
 		];
@@ -41,19 +46,12 @@ describe('Google Workspace Admin - Get Many Devices', () => {
 
 		expect(googleApiRequestSpy).toHaveBeenCalledTimes(1);
 		expect(googleApiRequestSpy).toHaveBeenCalledWith(
-			'GET',
-			'/directory/v1/customer/my_customer/devices/chromeos/',
-			{},
-			{
-				customer: 'my_customer',
-				includeChildOrgunits: false,
-				maxResults: 100,
-				orderBy: 'notes',
-				orgUnitPath: '/admin-google Testing OU/Child OU',
-				projection: 'basic',
-			},
+			'POST',
+			'/directory/v1/customer/my_customer/devices/chromeos/9140fcff-7ba7-4324-8552-f7de68481b4c/action',
+			expect.objectContaining({
+				action: 'reenable',
+			}),
 		);
-
 		expect(result.finished).toEqual(true);
 	};
 

@@ -1,10 +1,9 @@
-import { type INodeTypes } from 'n8n-workflow';
-
 import { executeWorkflow } from '@test/nodes/ExecuteWorkflow';
 import { getResultNodeData, setup, workflowToTests } from '@test/nodes/Helpers';
 import type { WorkflowTestData } from '@test/nodes/types';
+import type { INodeTypes } from 'n8n-workflow';
 
-import * as transport from '../../../GenericFunctions';
+import * as transport from '../../GenericFunctions';
 
 const googleApiRequestSpy = jest.spyOn(transport, 'googleApiRequest');
 
@@ -37,7 +36,7 @@ googleApiRequestSpy.mockImplementation(async (method: string, resource: string) 
 });
 
 describe('Google Workspace Admin - Get Device', () => {
-	const workflows = ['nodes/Google/GSuiteAdmin/test/node/device/get.workflow.json'];
+	const workflows = ['nodes/Google/GSuiteAdmin/test/device/get.workflow.json'];
 	const tests = workflowToTests(workflows);
 	const nodeTypes = setup(tests);
 

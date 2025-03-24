@@ -1,34 +1,25 @@
-import { type INodeTypes } from 'n8n-workflow';
-
 import { executeWorkflow } from '@test/nodes/ExecuteWorkflow';
 import { getResultNodeData, setup, workflowToTests } from '@test/nodes/Helpers';
 import type { WorkflowTestData } from '@test/nodes/types';
+import type { INodeTypes } from 'n8n-workflow';
 
-import * as transport from '../../../GenericFunctions';
+import * as transport from '../../GenericFunctions';
 
 const googleApiRequestSpy = jest.spyOn(transport, 'googleApiRequest');
 
 googleApiRequestSpy.mockImplementation(async (method: string, resource: string) => {
-	if (method === 'GET' && resource === '/directory/v1/users/112507770188715252528') {
-		return {
-			kind: 'admin#directory#user',
-			id: '112507770188715252528',
-			primaryEmail: 'new@example.com',
-			name: {
-				givenName: 'New One',
-				familyName: 'User',
-				fullName: 'New One User',
+	if (method === 'GET' && resource === '/directory/v1/customer/my_customer/devices/chromeos/') {
+		return [
+			{
+				kind: 'admin#directory#chromeosdevices',
+				etag: '"6gJ8FoxdqGNyNxXYrlQh-KP52AygR_AihQSbYcusikU/oMWMqbsluP5m2PCo8Y7WmWeHGP4"',
 			},
-			isAdmin: false,
-			lastLoginTime: '1970-01-01T00:00:00.000Z',
-			creationTime: '2024-12-20T20:48:53.000Z',
-			suspended: true,
-		};
+		];
 	}
 });
 
-describe('Google Workspace Admin - Get User', () => {
-	const workflows = ['nodes/Google/GSuiteAdmin/test/node/user/get.workflow.json'];
+describe('Google Workspace Admin - Get Many Devices', () => {
+	const workflows = ['nodes/Google/GSuiteAdmin/test/device/getAll.workflow.json'];
 	const tests = workflowToTests(workflows);
 	const nodeTypes = setup(tests);
 
@@ -39,18 +30,8 @@ describe('Google Workspace Admin - Get User', () => {
 		const expectedOutput = [
 			{
 				json: {
-					kind: 'admin#directory#user',
-					id: '112507770188715252528',
-					primaryEmail: 'new@example.com',
-					name: {
-						givenName: 'New One',
-						familyName: 'User',
-						fullName: 'New One User',
-					},
-					isAdmin: false,
-					lastLoginTime: '1970-01-01T00:00:00.000Z',
-					creationTime: '2024-12-20T20:48:53.000Z',
-					suspended: true,
+					kind: 'admin#directory#chromeosdevices',
+					etag: '"6gJ8FoxdqGNyNxXYrlQh-KP52AygR_AihQSbYcusikU/oMWMqbsluP5m2PCo8Y7WmWeHGP4"',
 				},
 			},
 		];
@@ -62,10 +43,18 @@ describe('Google Workspace Admin - Get User', () => {
 		expect(googleApiRequestSpy).toHaveBeenCalledTimes(1);
 		expect(googleApiRequestSpy).toHaveBeenCalledWith(
 			'GET',
-			'/directory/v1/users/112507770188715252528',
+			'/directory/v1/customer/my_customer/devices/chromeos/',
 			{},
-			{ projection: 'basic' },
+			{
+				customer: 'my_customer',
+				includeChildOrgunits: false,
+				maxResults: 100,
+				orderBy: 'notes',
+				orgUnitPath: '/admin-google Testing OU/Child OU',
+				projection: 'basic',
+			},
 		);
+
 		expect(result.finished).toEqual(true);
 	};
 
