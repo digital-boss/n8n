@@ -29,9 +29,11 @@
 	"pinData": {
 		"Change Status": [
 			{
-				"kind": "admin#directory#chromeosdeviceAction",
-				"action": "reenable",
-				"status": "SUCCESS"
+				"json": {
+					"kind": "admin#directory#chromeosdeviceAction",
+					"action": "reenable",
+					"status": "SUCCESS"
+				}
 			}
 		]
 	},
