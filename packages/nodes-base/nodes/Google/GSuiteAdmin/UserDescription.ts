@@ -1210,11 +1210,6 @@ export const userFields: INodeProperties[] = [
 						description: 'Whether Assign Inventory Reporting Admin role',
 					},
 					{
-						name: 'Mobile Admin',
-						value: 'mobileAdmin',
-						description: 'Whether Assign Mobile Admin role',
-					},
-					{
 						name: 'Services Admin',
 						value: 'servicesAdmin',
 						description: 'Whether Assign Services Admin role',

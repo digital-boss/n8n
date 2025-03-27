@@ -107,23 +107,6 @@ BQIDAQAB
 		},
 		baseUrl: 'https://api.gong.io',
 	},
-	gSuiteAdminOAuth2Api: {
-		grantType: 'authorizationCode',
-		authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-		accessTokenUrl: 'https://oauth2.googleapis.com/token',
-		clientId: 'fake-client-id',
-		clientSecret: 'fake-client-secret',
-		scope: 'https://www.googleapis.com/auth/admin.directory.user.readonly',
-		authQueryParameters: 'access_type=offline&prompt=consent',
-		authentication: 'body',
-		oauthTokenData: {
-			access_token: 'fake-access-token',
-			refresh_token: 'fake-refresh-token',
-			scope: 'https://www.googleapis.com/auth/admin.directory.user.readonly',
-			token_type: 'Bearer',
-			expires_in: 3600,
-		},
-	},
 	microsoftEntraOAuth2Api: {
 		grantType: 'authorizationCode',
 		authUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
@@ -250,5 +233,10 @@ BQIDAQAB
 		scope:
 			'user-read-playback-state playlist-read-collaborative user-modify-playback-state playlist-modify-public user-read-currently-playing playlist-read-private user-read-recently-played playlist-modify-private user-library-read user-follow-read',
 		server: 'https://api.spotify.com/',
+	},
+	baserowApi: {
+		host: 'https://api.baserow.io',
+		username: 'nathan@n8n.io',
+		password: 'fake-password',
 	},
 } as const;

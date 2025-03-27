@@ -1,15 +1,15 @@
 import { equalityTest, setup, workflowToTests } from '@test/nodes/Helpers';
 
-describe('Google Workspace Admin - Change Device Status', () => {
-	const workflows = ['nodes/Google/GSuiteAdmin/test/node/device/changeStatus.workflow.json'];
+describe('Google GSuiteAdmin Node', () => {
+	const workflows = ['nodes/Google/GSuiteAdmin/test/device/changeStatus.workflow.json'];
 	const workflowTests = workflowToTests(workflows);
 
-	describe('should change device status', () => {
+	describe('should change status', () => {
 		const nodeTypes = setup(workflowTests);
 
 		for (const workflow of workflowTests) {
 			workflow.nock = {
-				baseUrl: 'https://admin.googleapis.com',
+				baseUrl: 'https://www.googleapis.com/admin',
 				mocks: [
 					{
 						method: 'post',
@@ -26,7 +26,6 @@ describe('Google Workspace Admin - Change Device Status', () => {
 					},
 				],
 			};
-
 			test(workflow.description, async () => await equalityTest(workflow, nodeTypes));
 		}
 	});
