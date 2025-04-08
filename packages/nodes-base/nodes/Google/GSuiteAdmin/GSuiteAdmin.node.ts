@@ -119,7 +119,9 @@ export class GSuiteAdmin implements INodeType {
 					}>;
 				};
 
+				// Todo: is this array check necessary?
 				if (Array.isArray(orgUnits.organizationUnits)) {
+					// Todo: I don't think it is necessary to throw an error here, just return empty array.
 					if (orgUnits.organizationUnits.length === 0) {
 						throw new NodeOperationError(
 							this.getNode(),
@@ -465,7 +467,7 @@ export class GSuiteAdmin implements INodeType {
 						const lastName = this.getNodeParameter('lastName', i) as string;
 						const password = this.getNodeParameter('password', i) as string;
 						const username = this.getNodeParameter('username', i) as string;
-						const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
+						const additionalFields = this.getNodeParameter('additionalFields', i);
 
 						const body: IDataObject = {
 							name: {
@@ -516,18 +518,16 @@ export class GSuiteAdmin implements INodeType {
 								const { schemaName, fieldName, value } = field as {
 									schemaName: string;
 									fieldName: string;
-									value: any;
+									value: any; // Todo: are you sure value is of type any? In the description it is defined as type: 'string'
 								};
 
 								if (!schemaName || !fieldName || value === undefined || value === '') {
+									// Todo: why use console.error here?
 									console.error('Missing schemaName, fieldName, or value in customFields:', field);
 									return;
 								}
 
-								if (!customSchemas[schemaName]) {
-									customSchemas[schemaName] = {};
-								}
-
+								customSchemas[schemaName] ??= {};
 								(customSchemas[schemaName] as IDataObject)[fieldName] = value;
 							});
 
@@ -789,18 +789,16 @@ export class GSuiteAdmin implements INodeType {
 								const { schemaName, fieldName, value } = field as {
 									schemaName: string;
 									fieldName: string;
-									value: any;
+									value: any; // Todo: are you sure value is of type any? In the description it is defined as type: 'string'
 								};
 
 								if (!schemaName || !fieldName || value === undefined || value === '') {
+									// Todo: why use console.error here?
 									console.error('Missing schemaName, fieldName, or value in customFields:', field);
 									return;
 								}
 
-								if (!customSchemas[schemaName]) {
-									customSchemas[schemaName] = {};
-								}
-
+								customSchemas[schemaName] ??= {};
 								(customSchemas[schemaName] as IDataObject)[fieldName] = value;
 							});
 
