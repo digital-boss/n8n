@@ -9,14 +9,8 @@ export async function fetchAllTeams(this: IHookFunctions): Promise<TeamResponse[
 		this,
 		'GET',
 		'/v1.0/me/joinedTeams',
-	)) as { value: IDataObject[] };
-	return teams.map(
-		(team) =>
-			({
-				id: team.id as string,
-				displayName: team.displayName as string,
-			}) as TeamResponse,
-	);
+	)) as { value: TeamResponse[] };
+	return teams;
 }
 
 export async function fetchAllChannels(
@@ -27,18 +21,16 @@ export async function fetchAllChannels(
 		this,
 		'GET',
 		`/v1.0/teams/${teamId}/channels`,
-	)) as { value: IDataObject[] };
-	return channels.map((channel: IDataObject) => ({
-		id: channel.id as string,
-		displayName: channel.displayName as string,
-	}));
+	)) as { value: ChannelResponse[] };
+	return channels;
 }
 
+// Todo: where is this function used?
 export async function fetchAllChats(this: IHookFunctions): Promise<ChatResponse[]> {
 	const { value: chats } = (await microsoftApiRequest.call(this, 'GET', '/v1.0/chats')) as {
 		value: IDataObject[];
 	};
-	return chats.map((chat: IDataObject) => ({
+	return chats.map((chat) => ({
 		id: chat.id as string,
 		displayName: (chat.topic as string) || (chat.id as string),
 		url: chat.webUrl as string,
@@ -65,14 +57,9 @@ export async function createSubscription(
 		'POST',
 		'/v1.0/subscriptions',
 		body,
-	)) as IDataObject;
+	)) as SubscriptionResponse;
 
-	return {
-		id: response.id as string,
-		resource: response.resource as string,
-		notificationUrl: response.notificationUrl as string,
-		expirationDateTime: response.expirationDateTime as string,
-	};
+	return response;
 }
 
 export async function getResourcePath(

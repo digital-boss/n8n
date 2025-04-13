@@ -347,6 +347,7 @@ export class MicrosoftTeamsTrigger implements INodeType {
 				const webhookData = this.getWorkflowStaticData('node');
 
 				try {
+					// Todo: why get the subscriptions, when you already have the ids saved in webhookData.subscriptionIds?
 					const subscriptions = (await microsoftApiRequestAllItems.call(
 						this as unknown as ILoadOptionsFunctions,
 						'value',
@@ -378,6 +379,7 @@ export class MicrosoftTeamsTrigger implements INodeType {
 						}),
 					);
 
+					// Todo: delete the property. https://docs.n8n.io/code/cookbook/builtin/get-workflow-static-data/
 					webhookData.subscriptionIds = [];
 					return true;
 				} catch (error) {
